@@ -1,0 +1,5 @@
+https://www.weatherapi.com/my/
+https://www.weatherapi.com/docs/#apis-realtime
+https://developer.mozilla.org/ru/
+https://weather.com/weather/today/l/c5514c91b063693fcf7783eb6d6ea8dddea313a3fc67c984b933ee8e6328c502
+https://sinoptik.ua/pohoda/kyiv

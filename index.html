@@ -6,10 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Підключення стилів -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 
-  <title>Document</title>
+  <title>Forecast from Yuli</title>
 </head>
 
 <body>
@@ -18,35 +18,39 @@
     integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc"
     crossorigin="anonymous"></script>
 
-  <!-- Підключення локального скрипта -->
-  <script src="script.js"></script>
+  <h1>Forecast from Yuli</h1>
 
-  <header>Forcast from Yuli</header>
-
-  <div class="forcast">
-    <div class="weather_today">
-
-      <div class="current">Today
-        <div class="data"></div>
-        <div class="tempr"></div>
-        <div class="temp_feels"></div>
-        <div class="precipitation"></div>
-        <div class="humidity"></div>
-        <div class="wind"></div>
-      </div>
-
-      <div class="today_morning"></div>
-      <div class="today_day"></div>
-      <div class="today_evening"></div>
+  <div class="forecast">
+    <div class="info">
+    <input type="text" class="location">
+    <h3>data</h3>
+  </div>
+  <div class="weather_today">
+    <div class="current">
+      <h2>Today</h2>
+      <div class="data"></div>
+      <div class="temp"></div>
+      <div class="temp_feels"></div>
+      <div class="precipitation"></div>
+      <div class="humidity"></div>
+      <div class="wind"></div>
     </div>
-    
-    <div class="weather_next">
-      <div class="next_1day"></div>
-      <div class="next_2day"></div>
-      <div class="next_3day"></div>
+
+    <div class="periods">
+      <div class="today_morning">Morning</div>
+      <div class="today_day">Day</div>
+      <div class="today_evening">Evening</div>
+      <div class="today_night">Night</div>
     </div>
   </div>
 
+  <div class="weather_next">
+    <div class="next_1day">+1 day</div>
+    <div class="next_2day">+2 days</div>
+    <div class="next_3day">+3 days</div>
+    <div class="check_if_want">Other</div>
+  </div>
+  </div>
 </body>
 
 </html>

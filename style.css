@@ -268,3 +268,12 @@ button.close:hover {
   color: #ff3366;
   transform: scale(1.2);
 }
+.dark-overlay-content {
+  background-color: #222;
+  color: #eee;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}

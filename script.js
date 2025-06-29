@@ -123,7 +123,7 @@ function setNextDayEvents() {
   document.querySelector('.check_if_want').onclick = () => {
     document.querySelector('.overlay_inner').innerHTML = `
       <button class="close" onclick="closeLay()"><i class="fa-solid fa-xmark"></i></button>
-      <img src="https://miro.medium.com/v2/resize:fit:500/1*QU_-mv5-_TfWGRZI1oFKeg.jpeg" style="width:100%; border-radius: 10px;">
+      <h1>Check this tomorrow</h1>
     `;
     document.querySelector('.overlay').classList.add('open');
   };
@@ -170,3 +170,12 @@ function setWeatherBackground(condition) {
 }
 
 getWeather(LOCATION);
+document.querySelector('.check_if_want').onclick = () => {
+  document.querySelector('.overlay_inner').innerHTML = `
+    <button class="close" onclick="closeLay()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="dark-overlay-content">
+      <h1>Check this tomorrow</h1>
+    </div>
+  `;
+  document.querySelector('.overlay').classList.add('open');
+};

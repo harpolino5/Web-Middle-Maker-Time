@@ -1,57 +1,56 @@
 const API_KEY = '951a789b2e6b41cba50132218253105';
 const LOCATION = 'Kyiv';
+let weatherData = null;
 
 fetch(`http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${LOCATION}&aqi=no`, {
-    method: "get",
-}).then((res) => res.json()).then(data => {
+  method: "get",
+})
+  .then((res) => res.json())
+  .then(data => {
     document.querySelector('.forecast').innerHTML = `
-    <div class="info">
-      <input type="text" class="location" text="Kyiv" placeholder="Enter city name">
-      <button class="location-btn"><i class="fas fa-search"></i></button>
-      <ul class="canBe"></ul>
-    </div>
-        <div class="weather_today">
-      <div class="current">
-        <h2>${new Date(data.location.localtime.split(" ")[0]).toLocaleDateString('en-US', { weekday: 'long' })} ${data.location.localtime.split(" ")[1]}</h2>
-        <div class="temp">${MandP(data.current.temp_c)}°C</div>
-        <div class="temp_feels"><span>Feels like:</span><span></span><span>${MandP(data.current.feelslike_c)}°C<span></div>
-        <div class="precipitation"><span>Precipitation:</span><span></span><span>${data.current.precip_mm} mm</span></div>
-        <div class="humidity"><span>Humidity:</span><span></span><span>${data.current.humidity}%</span></div>
-        <div class="wind"><span>Wind:</span><span></span><span>${data.current.wind_kph} km/h</span></div>
+      <div class="weather_today">
+        <div class="current">
+          <h2>${new Date(data.location.localtime.split(" ")[0])
+            .toLocaleDateString('en-US', { weekday: 'long' })} 
+            ${data.location.localtime.split(" ")[1]}
+          </h2>
+          <div class="temp">${MandP(data.current.temp_c)}°C</div>
+          <div class="temp_feels">
+            <span>Feels like:</span><span></span><span>${MandP(data.current.feelslike_c)}°C</span>
+          </div>
+          <div class="precipitation">
+            <span>Precipitation:</span><span class="dot-line"></span><span>${data.current.precip_mm} mm</span>
+          </div>
+          <div class="humidity">
+            <span>Humidity:</span><span></span><span>${data.current.humidity}%</span>
+          </div>
+          <div class="wind">
+            <span>Wind:</span><span></span><span>${data.current.wind_kph} km/h</span>
+          </div>
+        </div>
+        <div class="periods">
+          <div class="today_morning">Morning: ${MandP(data.forecast.forecastday[0].hour[8].temp_c)}°C</div>
+          <div class="today_day">Day: ${MandP(data.forecast.forecastday[0].hour[14].temp_c)}°C</div>
+          <div class="today_evening">Evening: ${MandP(data.forecast.forecastday[0].hour[20].temp_c)}°C</div>
+          <div class="today_night">Night: ${MandP(data.forecast.forecastday[0].hour[23].temp_c)}°C</div>
+        </div>
       </div>
-
-      <div class="periods">
-        <div class="today_morning">Morning:${data.forecast.forecastday[0].hour[8].temp_c}°C</div>
-        <div class="today_day">Day:${data.forecast.forecastday[0].hour[14].temp_c}°C</div>
-        <div class="today_evening">Evening:${data.forecast.forecastday[0].hour[20].temp_c}°C</div>
-        <div class="today_night">Night:${data.forecast.forecastday[0].hour[23].temp_c}°C</div>
+      <div class="weather_next">
+        <div class="next_1day">+1 day</div>
+        <div class="next_2day">+2 days</div>
+        <div class="next_3day">+3 days</div>
+        <div class="check_if_want">Other</div>
       </div>
-    </div>
-
-    <div class="weather_next">
-      <div class="next_1day">+1 day</div>
-      <div class="next_2day">+2 days</div>
-      <div class="next_3day">+3 days</div>
-      <div class="check_if_want">Other</div>
-    </div>`
-}).catch(error => {
+      <div class="overlay">
+        <div class="overlay_inner">
+          <button class="close" onclick="closeLay()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+    `;
+  })
+  .catch(error => {
     console.error('Error fetching weather data:', error);
-});
-
-function updateWeatherClass(condition) {
-  const body = document.body;
-  body.className = ''; // Очистити попередні класи
-
-  if (condition.includes("cloud")) {
-    body.classList.add("weather-cloudy");
-  } else if (condition.includes("rain") || condition.includes("drizzle")) {
-    body.classList.add("weather-rainy");
-  } else if (condition.includes("wind")) {
-    body.classList.add("weather-windy");
-  } else {
-    body.classList.add("weather-clear");
-  }
-}
+  });
 
 function MandP(index) {
   if (index <= 0) {
@@ -62,81 +61,112 @@ function MandP(index) {
   }
 }
 
-function morning() {
-  toggleOverlay()
-}
-
-function toggleOverlay() {
-  if (!document.querySelector(".overlay").classList.contains("open")) {
-    document.querySelector(".overlay").classList.add("open")
-  } else {
-    document.querySelector(".overlay").classList.remove("open")
-  }
-}
-
-let cities = [];
-const searchBtn = document.querySelector('.location-btn');
-const canBeList = document.querySelector('.canBe');
-const input = document.querySelector('.location');
-input.addEventListener('input', function () {
-  const value = input.value;
-  console.log(value)
-  if (value.length >= 3) {
-    fetch(`https://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${value}`)
-      .then(response => response.json())
-      .then(results => {
-        canBeList.innerHTML = '';
-        if (results.length === 0) {
-          const li = document.createElement('li');
-          li.textContent = 'Місто не знайдено';
-          canBeList.appendChild(li);
-        } else {
-          results.forEach(city => {
-            const li = document.createElement('li');
-            li.textContent = city.name;
-            li.style.cursor = 'pointer';
-            li.addEventListener('click', function () {
-              input.value = city.name;
-              canBeList.innerHTML = '';
-              loadWeather(city.name);
-            });
-            canBeList.appendChild(li);
-          });
-        }
-      });
-  } else {
-    canBeList.innerHTML = '';
+document.querySelector('.location-btn').addEventListener('click', () => {
+  const city = document.querySelector('.location-input').value.trim();
+  if (city) {
+    currentCity = city;
+    getWeather(city);
   }
 });
 
-
-
-searchBtn.addEventListener('click', function () {
-  loadWeather(input.value);
-});
-
-function loadWeather(location) {
-  fetch(`http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${location}&days=4&aqi=no`)
+function getWeather(city) {
+  fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${city}&days=4&aqi=no&alerts=no`)
     .then(res => res.json())
     .then(data => {
-      renderCurrent(data);
-      currentForecastData = data;
-      updateWeatherClass(data.current.condition.text.toLowerCase());
+      weatherData = data;
+      renderToday();
+      setWeatherBackground(data.current.condition.text);
+      setNextDayEvents();
     })
-    .catch(err => alert('Не вдалося завантажити погоду'));
+    .catch(err => {
+      alert('City not found!');
+      console.error(err);
+    });
 }
 
+function renderToday(index = 0) {
+  const day = weatherData.forecast.forecastday[index];
+  const current = index === 0 ? weatherData.current : day.day;
+  const hour = day.hour;
 
-function renderCurrent(data, dayIndex = 0) {
-  const day = data.forecast.forecastday[dayIndex];
-  // оновити Today, температури, вологість, вітер...
-  document.querySelector('.today_morning').onclick = () => showOverlay(day.hour, 8);
-  document.querySelector('.today_day').onclick = () => showOverlay(day.hour, 14);
-  document.querySelector('.today_evening').onclick = () => showOverlay(day.hour, 20);
-  document.querySelector('.today_night').onclick = () => showOverlay(day.hour, 23);
+  const temp = index === 0 ? MandP(current.temp_c) : MandP(day.day.avgtemp_c);
+  const feels = index === 0 ? MandP(current.feelslike_c) : '-';
+  const precip = current.precip_mm;
+  const hum = current.humidity;
+  const wind = current.wind_kph;
+  const time = index === 0 ? weatherData.location.localtime : day.date;
 
-  const nextBtns = document.querySelectorAll('.weather_next > div');
-  nextBtns.forEach((btn, i) => {
-    btn.onclick = () => renderCurrent(data, i + 1);
+  document.querySelector('.weather_today .current').innerHTML = `
+    <h2>${new Date(time).toLocaleDateString('en-US', { weekday: 'long' })}</h2>
+    <div class="temp">${temp}°C</div>
+    <div class="temp_feels"><span>Feels like:</span><span></span><span>${feels}°C</span></div>
+    <div class="precipitation"><span>Precipitation:</span><span></span><span>${precip} mm</span></div>
+    <div class="humidity"><span>Humidity:</span><span></span><span>${hum}%</span></div>
+    <div class="wind"><span>Wind:</span><span></span><span>${wind} km/h</span></div>
+    ${index !== 0 ? '<button class="return-today" onclick="renderToday(0)">Return to Today</button>' : ''}
+  `;
+
+  document.querySelector('.today_morning').textContent = `Morning: ${hour[8].temp_c}°C`;
+  document.querySelector('.today_day').textContent = `Day: ${hour[14].temp_c}°C`;
+  document.querySelector('.today_evening').textContent = `Evening: ${hour[20].temp_c}°C`;
+  document.querySelector('.today_night').textContent = `Night: ${hour[23].temp_c}°C`;
+
+  ['morning', 'day', 'evening', 'night'].forEach((period, idx) => {
+    document.querySelector(`.today_${period}`).onclick = () => showOverlay(index, idx);
   });
 }
+
+function setNextDayEvents() {
+  document.querySelector('.next_1day').onclick = () => renderToday(1);
+  document.querySelector('.next_2day').onclick = () => renderToday(2);
+  document.querySelector('.next_3day').onclick = () => renderToday(3);
+  document.querySelector('.check_if_want').onclick = () => {
+    document.querySelector('.overlay_inner').innerHTML = `
+      <button class="close" onclick="closeLay()"><i class="fa-solid fa-xmark"></i></button>
+      <img src="https://miro.medium.com/v2/resize:fit:500/1*QU_-mv5-_TfWGRZI1oFKeg.jpeg" style="width:100%; border-radius: 10px;">
+    `;
+    document.querySelector('.overlay').classList.add('open');
+  };
+}
+
+function closeLay() {
+  document.querySelector('.overlay').classList.remove('open');
+}
+
+function showOverlay(dayIndex, periodIndex) {
+  const periods = [8, 14, 20, 23];
+  const hourStart = periods[periodIndex];
+  const data = weatherData.forecast.forecastday[dayIndex].hour.slice(hourStart - 2, hourStart + 3);
+
+  let html = `
+    <button class="close" onclick="closeLay()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="overlay-grid">
+  `;
+
+  data.forEach(h => {
+    html += `<div>${h.time.split(' ')[1]}</div><div>${h.temp_c}°C, ${h.condition.text}</div>`;
+  });
+
+  html += `</div>`;
+
+  console.log(html)
+  document.querySelector('.overlay_inner').innerHTML = html;
+  document.querySelector('.overlay').classList.add('open');
+}
+
+function setWeatherBackground(condition) {
+  const lower = condition.toLowerCase();
+  document.body.classList.remove('weather-cloudy', 'weather-rainy', 'weather-windy');
+
+  if (lower.includes('cloud')) {
+    document.body.classList.add('weather-cloudy');
+  } else if (lower.includes('rain') || lower.includes('drizzle')) {
+    document.body.classList.add('weather-rainy');
+  } else if (lower.includes('wind')) {
+    document.body.classList.add('weather-windy');
+  } else {
+    document.body.style.background = 'linear-gradient(to right, #eef2f3, #7ca1d6)';
+  }
+}
+
+getWeather(LOCATION);
